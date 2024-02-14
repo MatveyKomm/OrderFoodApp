@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import {createBrowserRouter, defer, RouterProvider} from "react-router-dom";
 import {Menu} from "./pages/Menu/Menu.tsx";
 import {Cart} from "./pages/Cart/Cart.tsx";
 import {Layout} from "./layout/Menu/Layout.tsx";
@@ -26,8 +26,9 @@ const router = createBrowserRouter([
                 path: '/product/:id',
                 element: <Product />,
                 loader: async ({ params }) => {
-                    const { data } = await axios.get(`${PREFIX}/products/${params.id}`);
-                    return data;
+                    return defer({
+                        data: axios.get(`${PREFIX}/products/${params.id}`).then(data => data)
+                    });
                 }
             }
         ]
