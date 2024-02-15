@@ -1,11 +1,12 @@
 import Headling from "../../components/Headling/Headling.tsx";
 import Input from "../../components/Input/Input.tsx";
 import Button from "../../components/Button/Button.tsx";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import styles from './Login.module.css';
 import {FormEvent, useState} from "react";
 import axios, {AxiosError} from "axios";
 import {PREFIX} from "../../helpers/API.ts";
+import {LoginResponse} from "../../interfaces/Auth.interface.tsx";
 
 export type LoginForm = {
     email: {
@@ -18,6 +19,7 @@ export type LoginForm = {
 
 export function Login() {
     const [error, setError] = useState<string | null>();
+    const navigate = useNavigate();
 
     const submitHandler = async (e: FormEvent) => {
         e.preventDefault()
@@ -33,10 +35,12 @@ export function Login() {
 
     const sendLogin = async (email: string, password: string) => {
         try {
-            await axios.post(`${PREFIX}/auth/login`, {
+            const { data } = await axios.post<LoginResponse>(`${PREFIX}/auth/login`, {
                 email,
                 password
             });
+            localStorage.setItem('jwt', data.access_token);
+            navigate('/');
         } catch (e) {
             if (e instanceof AxiosError) {
                 setError(e.response?.data.message);
