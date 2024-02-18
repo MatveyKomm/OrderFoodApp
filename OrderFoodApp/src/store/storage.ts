@@ -1,4 +1,3 @@
-
 export function loadState<T>(key: string): T | undefined {
     try {
         const jsonState = localStorage.getItem(key);
