@@ -3,10 +3,10 @@ import Input from "../../components/Input/Input.tsx";
 import Button from "../../components/Button/Button.tsx";
 import {Link, useNavigate} from "react-router-dom";
 import styles from './Login.module.css';
-import {FormEvent, useState} from "react";
-import axios, {AxiosError} from "axios";
-import {PREFIX} from "../../helpers/API.ts";
-import {LoginResponse} from "../../interfaces/Auth.interface.tsx";
+import {FormEvent, useEffect} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../store/store.ts";
+import {login, userActions} from "../../store/user.slice.ts";
 
 export type LoginForm = {
     email: {
@@ -18,13 +18,20 @@ export type LoginForm = {
 };
 
 export function Login() {
-    const [error, setError] = useState<string | null>();
     const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
+    const { jwt, loginErrorMessage } = useSelector((state: RootState) => state.user);
+
+    useEffect(() => {
+        if (jwt) {
+            navigate('/');
+        }
+    }, [jwt, navigate])
 
     const submitHandler = async (e: FormEvent) => {
         e.preventDefault()
 
-        setError(null);
+        dispatch(userActions.clearLoginError());
         const target = e.target as typeof e.target & LoginForm;
         const { email, password } = target;
         if (!email.value || !password.value) {
@@ -34,23 +41,12 @@ export function Login() {
     };
 
     const sendLogin = async (email: string, password: string) => {
-        try {
-            const { data } = await axios.post<LoginResponse>(`${PREFIX}/auth/login`, {
-                email,
-                password
-            });
-            localStorage.setItem('jwt', data.access_token);
-            navigate('/');
-        } catch (e) {
-            if (e instanceof AxiosError) {
-                setError(e.response?.data.message);
-            }
-        }
+        dispatch(login({ email, password}));
     };
 
     return <div className={styles['login']}>
         <Headling>Вход</Headling>
-        {error && <div className={styles['error']}>{error}</div>}
+        {loginErrorMessage && <div className={styles['error']}>{loginErrorMessage}</div>}
         <form className={styles['form']} onSubmit={submitHandler}>
             <div className={styles['field']}>
                 <label htmlFor='email'>Ваш email</label>
