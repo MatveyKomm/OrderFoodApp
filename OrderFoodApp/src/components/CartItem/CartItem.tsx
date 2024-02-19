@@ -10,6 +10,7 @@ function CartItem(props: CartItemProps) {
     const dispatch = useDispatch<AppDispatch>();
 
     const removeFromCartHandler = () => {
+        dispatch(cartActions.remove(props.id));
     };
 
     const addToCartHandler = () => {
@@ -17,7 +18,7 @@ function CartItem(props: CartItemProps) {
     };
 
     const deleteFromCartHandler= () => {
-
+        dispatch(cartActions.delete(props.id))
     };
 
     return (
@@ -25,18 +26,18 @@ function CartItem(props: CartItemProps) {
             <div className={styles['image']} style={{backgroundImage: `url('${props.image}')`}}></div>
             <div className={styles['description']}>
                 <div className={styles['name']}>{props.name}</div>
-                <div className={styles['currency']}>{props.price}&nbsp;₽</div>
+                <div className={styles['price']}>{props.price}&nbsp;₽</div>
             </div>
             <div className={styles['actions']}>
-                <button className={styles['button']} onClick={removeFromCartHandler}>
-                    <img src='/add-to-cart-icon.svg' alt='Удалить из корзины'/>
+                <button className={styles['minus']} onClick={removeFromCartHandler}>
+                    <img src='/minus-icon.svg' alt='Удалить из корзины'/>
                 </button>
-                <div>{props.count}</div>
-                <button className={styles['button']} onClick={addToCartHandler}>
-                    <img src='/add-to-cart-icon.svg' alt='Добавить в корзину'/>
+                <div className={styles['number']}>{props.count}</div>
+                <button className={styles['plus']} onClick={addToCartHandler}>
+                    <img src='/plus-icon.svg' alt='Добавить в корзину'/>
                 </button>
                 <button className={styles['delete']} onClick={deleteFromCartHandler}>
-                    <img src='/add-to-cart-icon.svg' alt='Удалить'/>
+                    <img src='/delete-item-icon.svg' alt='Удалить'/>
                 </button>
             </div>
         </div>
