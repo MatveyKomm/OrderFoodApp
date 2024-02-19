@@ -11,7 +11,7 @@ import {RootState} from "../../store/store.ts";
 export function Layout() {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-    const profile = useSelector((s: RootState) => s.user.profile)
+    const profile = useSelector((s: RootState) => s.user.profile);
     const items = useSelector((s: RootState) => s.cart.items);
 
     useEffect(() => {
